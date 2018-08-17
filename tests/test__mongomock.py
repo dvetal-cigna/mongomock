@@ -958,6 +958,19 @@ class MongoClientCollectionTest(_CollectionComparisonTest):
         self.cmp.do.update({"name": "alice"}, {"$set": {"age": 1}}, True)
         self.cmp.compare_ignore_order.find()
 
+    def test__set_subdocument_array(self):
+        self.cmp.do.remove()
+        self.cmp.do.insert({'name': 'bob', 'data': [0, 0]})
+        self.cmp.do.insert({'name': 'bob', 'some_field': 'B', 'data': [0, 0]})
+        self.cmp.do.update({'name': 'bob'}, {'$set': {'some_field': 'A', 'data.1': 3}})
+        self.cmp.compare.find()
+
+    def test__set_subdocument_array_bad_index_after_dot(self):
+        self.cmp.do.remove()
+        self.cmp.do.insert({'name': 'bob', 'some_field': 'B', 'data': [0, 0]})
+        self.cmp.do.update({'name': 'bob'}, {'$set': {'some_field': 'A', 'data.3': 1}})
+        self.cmp.compare.find()
+
     def test__set_subdocuments(self):
         """Tests using $set for setting subdocument fields"""
         self.skipTest(
