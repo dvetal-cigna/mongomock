@@ -2080,6 +2080,13 @@ def _set_updater(doc, field_name, value):
             # bson validation
             BSON.encode({field_name: value}, check_keys=True)
         doc[field_name] = value
+    if isinstance(doc, list):
+        try:
+            doc[int(field_name)] = value
+        except IndexError:
+            len_diff = int(field_name) - (len(doc)-1)
+            doc += [None]*len_diff
+            doc[int(field_name)] = value
 
 
 def _unset_updater(doc, field_name, value):
