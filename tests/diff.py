@@ -7,8 +7,10 @@ class _NO_VALUE(object):
 # we don't use NOTHING because it might be returned from various APIs
 NO_VALUE = _NO_VALUE()
 
+NoneType = type(None)
+
 _SUPPORTED_TYPES = set([
-    int, float, bool, str, datetime.datetime
+    int, float, bool, str, datetime.datetime, NoneType
 ])
 
 dict_type = dict

@@ -1020,6 +1020,7 @@ class Collection(object):
         if positional:
             return self._update_document_fields_positional(
                 existing_document, v, spec, updater, subdocument)
+
         self._update_document_fields(existing_document, v, updater)
         return subdocument
 
@@ -1045,7 +1046,7 @@ class Collection(object):
         field_name = field_name_parts[-1]
         if isinstance(doc, list):
             try:
-                doc[int(field_name)] = field_value
+                updater(doc, field_name, field_value)
             except IndexError:
                 pass
         else:
@@ -2089,6 +2090,14 @@ def _unset_updater(doc, field_name, value):
 def _inc_updater(doc, field_name, value):
     if isinstance(doc, dict):
         doc[field_name] = doc.get(field_name, 0) + value
+
+    if isinstance(doc, list):
+        try:
+            doc[int(field_name)] += value
+        except IndexError:
+            len_diff = int(field_name) - (len(doc)-1)
+            doc += [None]*len_diff
+            doc[int(field_name)] = value
 
 
 def _max_updater(doc, field_name, value):

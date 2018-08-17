@@ -51,3 +51,8 @@ flycheck-*
 
 ### vim
 .ropeproject/
+
+## Venv
+venv/
+
+.pytest_cache/
