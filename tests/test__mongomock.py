@@ -4,7 +4,6 @@ import re
 import time
 from unittest import TestCase, skipIf
 
-
 import mongomock
 from mongomock import ConfigurationError
 from mongomock import Database
@@ -1014,6 +1013,20 @@ class MongoClientCollectionTest(_CollectionComparisonTest):
         self.cmp.do.update({'name': 'bob'}, {'$inc': {'data.age': 1}})
         self.cmp.compare.find()
         self.cmp.do.update({'name': 'bob'}, {'$inc': {'data.age2': 1}})
+        self.cmp.compare.find()
+
+    def test__inc_subdocument_array(self):
+        self.cmp.do.remove()
+        self.cmp.do.insert({'name': 'bob', 'data': [0, 0]})
+        self.cmp.do.update({'name': 'bob'}, {'$inc': {'data.1': 1}})
+        self.cmp.compare.find()
+        self.cmp.do.update({'name': 'bob'}, {'$inc': {'data.1': 1}})
+        self.cmp.compare.find()
+
+    def test__inc_subdocument_array_bad_index_after_dot(self):
+        self.cmp.do.remove()
+        self.cmp.do.insert({'name': 'bob', 'data': [0, 0]})
+        self.cmp.do.update({'name': 'bob'}, {'$inc': {'data.3': 1}})
         self.cmp.compare.find()
 
     def test__inc_subdocument_positional(self):
